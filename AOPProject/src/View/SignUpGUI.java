@@ -1,4 +1,4 @@
-package AOOProject;
+package View;
 
 import java.awt.EventQueue;
 
@@ -47,7 +47,7 @@ public class SignUpGUI extends JFrame {
 	public SignUpGUI() {
 		setBackground(UIManager.getColor("EditorPane.background"));
 		setResizable(false);
-		setTitle("LOGIN");
+		setTitle("SIGN UP");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 728, 609);
 		contentPane = new JPanel();
@@ -57,7 +57,7 @@ public class SignUpGUI extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel signUpGuiIcon = new JLabel(new ImageIcon(getClass().getResource("cat64.png")));
+		JLabel signUpGuiIcon = new JLabel(new ImageIcon(getClass().getResource("cat128.png")));
 		signUpGuiIcon.setBounds(282, 16, 147, 119);
 		contentPane.add(signUpGuiIcon);
 		
@@ -120,7 +120,7 @@ public class SignUpGUI extends JFrame {
 		signGuiInputPanel.add(signGuiVerifyPasswordField);
 		
 		JLabel signGuiPurrConnect = new JLabel("PURR CONNECT");
-		signGuiPurrConnect.setBounds(261, 125, 189, 34);
+		signGuiPurrConnect.setBounds(260, 131, 189, 34);
 		contentPane.add(signGuiPurrConnect);
 		signGuiPurrConnect.setBackground(new Color(255, 255, 0));
 		signGuiPurrConnect.setForeground(new Color(255, 255, 0));

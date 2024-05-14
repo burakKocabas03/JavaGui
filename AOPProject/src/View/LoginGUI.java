@@ -1,4 +1,4 @@
-package AOOProject;
+package View;
 
 import java.awt.EventQueue;
 
@@ -6,18 +6,31 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import Helper.*;
+import Model.Users;
+
 import java.awt.Font;
 import javax.swing.UIManager;
 import java.awt.Color;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.awt.event.ActionEvent;
 import javax.swing.JCheckBox;
 import java.awt.SystemColor;
 import javax.swing.JPasswordField;
 
-public class LoginGUI extends JFrame {
+public class LoginGUI extends JFrame  {
+	
+	
+	
+	
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -44,6 +57,7 @@ public class LoginGUI extends JFrame {
 	 * Create the frame.
 	 */
 	public LoginGUI() {
+		
 		setBackground(UIManager.getColor("EditorPane.background"));
 		setResizable(false);
 		setTitle("LOGIN");
@@ -56,13 +70,13 @@ public class LoginGUI extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lbl_icon = new JLabel(new ImageIcon(getClass().getResource("cat64.png")));
-		lbl_icon.setBounds(251, 6, 189, 141);
+		JLabel lbl_icon = new JLabel(new ImageIcon(getClass().getResource("cat128.png")));
+		lbl_icon.setBounds(228, 0, 189, 141);
 		contentPane.add(lbl_icon);
 		
 		JPanel inputPanel = new JPanel();
 		inputPanel.setBackground(new Color(112, 128, 144));
-		inputPanel.setBounds(157, 166, 410, 409);
+		inputPanel.setBounds(117, 166, 410, 409);
 		contentPane.add(inputPanel);
 		inputPanel.setLayout(null);
 		
@@ -93,6 +107,46 @@ public class LoginGUI extends JFrame {
 		JButton btnLogin = new JButton("LOGIN");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if(usernameTxtField.getText().length()==0 || passwordField.getPassword().length == 0) {
+					Helper.showMsg("fill");
+					
+				}
+				
+				else {
+					try {
+					
+					Connection conn = dataBaseConnection.connection();
+					
+					Statement stmt  = conn.createStatement();
+					ResultSet rs =stmt.executeQuery("SELECT * FROM admin");
+					while(rs.next()) {
+						
+						if(usernameTxtField.getText().equals(rs.getString("userName")) && passwordField.getText().equals(rs.getString("password"))) {
+							Users user = new Users();
+							user.setId(rs.getInt("id"));
+							user.setUserName(rs.getString("userName"));
+							user.setPassWord(rs.getString("password"));
+							System.out.println(user.getUserName());
+							
+							
+						}
+						
+						
+					}
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+				}
+					catch(SQLException e1) {
+						e1.printStackTrace();}
+					}
 			}
 		});
 		btnLogin.setFont(new Font("Lucida Grande", Font.PLAIN, 13));
@@ -111,6 +165,13 @@ public class LoginGUI extends JFrame {
 		JButton btnSıgnUp = new JButton("SIGN UP");
 		btnSıgnUp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				SignUpGUI sgnUp = new SignUpGUI();
+				sgnUp.setVisible(true);
+				dispose();
+				
+				
+				
+				
 			}
 		});
 		btnSıgnUp.setBackground(new Color(95, 158, 160));
@@ -131,7 +192,7 @@ public class LoginGUI extends JFrame {
 		
 		JLabel purrConnectLbl = new JLabel("PURR CONNECT");
 		purrConnectLbl.setBackground(new Color(255, 255, 0));
-		purrConnectLbl.setBounds(251, 115, 189, 34);
+		purrConnectLbl.setBounds(228, 127, 189, 34);
 		contentPane.add(purrConnectLbl);
 		purrConnectLbl.setForeground(new Color(255, 255, 0));
 		purrConnectLbl.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 22));

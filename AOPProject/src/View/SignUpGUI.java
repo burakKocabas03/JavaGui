@@ -6,18 +6,30 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.UIManager;
 import java.awt.Color;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.awt.event.ActionEvent;
 import javax.swing.JCheckBox;
 import java.awt.SystemColor;
 import javax.swing.JPasswordField;
+import Helper.*;
 
 public class SignUpGUI extends JFrame {
+	dataBaseConnection dtbs = new dataBaseConnection();
+	Connection conn =dtbs.connection() ;
+	Statement st ;
+	PreparedStatement ps;
+	
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -94,6 +106,38 @@ public class SignUpGUI extends JFrame {
 		JButton signGuibtnLogin = new JButton("SIGN IN");
 		signGuibtnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
+				if(signGuiusernameTxtField.getText().length()==0 ||signGuipasswordField.getPassword().length == 0||signGuiVerifyPasswordField.getPassword().length==0 ) {
+					Helper.showMsg("fill");
+					
+				}
+				else {
+					if( !signGuipasswordField.getText().equals(signGuiVerifyPasswordField.getText())) {
+						JOptionPane.showMessageDialog(null,"Password and VerifyPassword are not same try again","Message",JOptionPane.INFORMATION_MESSAGE);
+						
+					}
+					else {
+						String query  ="INSERT INTO admin (userName,password) VALUES (?,?)" ;
+						try {
+							st=conn.createStatement();
+							ps = conn.prepareStatement(query);
+							ps.setString(1,signGuiusernameTxtField.getText() );
+							ps.setString(2,signGuiVerifyPasswordField.getText());
+							ps.executeUpdate();
+							System.out.println("ahmet");
+							
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						
+						
+						
+					}
+					
+					
+				}
+				
 			}
 		});
 		signGuibtnLogin.setFont(new Font("Lucida Grande", Font.PLAIN, 13));

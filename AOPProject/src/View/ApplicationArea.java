@@ -1,18 +1,30 @@
 package View;
 
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.FontMetrics;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import Helper.dataBaseConnection;
 import Model.Users;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Vector;
 import java.awt.event.ActionEvent;
 import javax.swing.JList;
 import javax.swing.JTable;
@@ -20,11 +32,16 @@ import javax.swing.JTabbedPane;
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
+
 import java.awt.GridLayout;
 import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JComboBox;
 
 public class ApplicationArea extends JFrame {
 	private DefaultTableModel friendModel = null;
@@ -35,6 +52,8 @@ public class ApplicationArea extends JFrame {
 	static Users user = new Users();
 	private JTextField addFriendtextField;
 	private JTable friendListTable;
+	private JComboBox<String> comboBox;
+    private DefaultComboBoxModel<String> comboBoxModel;
 	
 	/**
 	 * Launch the application.
@@ -57,6 +76,7 @@ public class ApplicationArea extends JFrame {
 	 * @throws SQLException 
 	 */
 	public ApplicationArea(Users user) {
+		// bu kısım friendList içindi
 		this.user =user;
 		friendModel = new DefaultTableModel();
 		String[]columName = new String[1];
@@ -73,6 +93,61 @@ public class ApplicationArea extends JFrame {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		
+		try {
+			ArrayList<String>userNames = new ArrayList<>();
+			Connection conn = dataBaseConnection.connection();
+	        Statement stmt;
+	        ResultSet rs;
+	        stmt = conn.createStatement();
+	        rs = stmt.executeQuery("SELECT * FROM admin");
+	        while(rs.next()) {
+	        	userNames.add(rs.getString("userName"));
+	        }
+	        comboBoxModel = new DefaultComboBoxModel<>(new Vector<>(userNames));
+	        comboBox = new JComboBox<>(comboBoxModel);
+	        
+	        comboBox.setEditable(true);
+	        
+	        
+	       JTextField comboBoxTextField = (JTextField)comboBox.getEditor().getEditorComponent();
+	       comboBoxTextField.addKeyListener(new KeyAdapter(){
+	            @Override
+	            public void keyReleased(KeyEvent e) {
+	                String input = comboBoxTextField.getText();
+	                if (input.isEmpty()) {
+	                    setModel(new DefaultComboBoxModel<>(new Vector<>(userNames)), "");
+	                } else {
+	                    DefaultComboBoxModel<String> filteredModel = getFilteredModel(userNames, input);
+	                    if (filteredModel.getSize() > 0) {
+	                        setModel(filteredModel, input);
+	                        comboBox.showPopup();
+	                    } else {
+	                        comboBox.hidePopup();
+	                    }
+	                }
+	            }
+	        });	
+	       
+	       
+
+	        
+	        
+	        
+	        
+	        
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        JTextField comboBoxtextField = (JTextField) comboBox.getEditor().getEditorComponent();
+        
+
+        
+		
+		
+		
+		
 		
 		
 		
@@ -112,14 +187,15 @@ public class ApplicationArea extends JFrame {
 		JLabel friendListLabel = new JLabel("Friends List");
 		friendListLabel.setBounds(563, 227, 81, 16);
 		contentPane.add(friendListLabel);
+
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(110, 176, 389, 405);
+		contentPane.add(scrollPane);
 		
-		JPanel feedPanel = new JPanel();
-		feedPanel.setBounds(110, 179, 389, 406);
-		contentPane.add(feedPanel);
-		feedPanel.setLayout(new BoxLayout(feedPanel, BoxLayout.X_AXIS));
+		JPanel panel_1 = new JPanel();
+		scrollPane.setViewportView(panel_1);
+		panel_1.setLayout(new BoxLayout(panel_1, BoxLayout.Y_AXIS));
 		
-		JScrollPane feedScrollPanel = new JScrollPane();
-		feedPanel.add(feedScrollPanel);
 		
 		JPanel panel = new JPanel();
 		panel.setBounds(110, 100, 389, 77);
@@ -129,6 +205,7 @@ public class ApplicationArea extends JFrame {
 	
 		
 		JTextArea blogPurrArea = new JTextArea();
+		 blogPurrArea.setPreferredSize(new Dimension(blogPurrArea.getPreferredSize().width, 70));
 		blogPurrArea.setLineWrap(true);
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(
@@ -147,10 +224,14 @@ public class ApplicationArea extends JFrame {
 					.addComponent(buttonPURR, GroupLayout.PREFERRED_SIZE, 13, Short.MAX_VALUE))
 		);
 		panel.setLayout(gl_panel);
+		
+		
 		buttonPURR.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String blogMessage = blogPurrArea.getText();
 				user.myPurrToDtbs(blogMessage);
+				
+
 				blogPurrArea.setText(null);
 				
 				
@@ -158,12 +239,28 @@ public class ApplicationArea extends JFrame {
 				
 			}
 		});
+		feedProccess(panel_1);
+		
+		JButton btnLogOut = new JButton("Log Out");
+		btnLogOut.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				LoginGUI lgnGui = new LoginGUI();
+				lgnGui.setVisible(true);
+                dispose();
+			}
+		});
+		btnLogOut.setBounds(551, 6, 117, 29);
+		contentPane.add(btnLogOut);
 		
 		
+		
+		
+	
 	}
 	
 	
-	public void updateFriendsList() {
+	private void updateFriendsList() {
 		DefaultTableModel clearModel = (DefaultTableModel) friendListTable.getModel();
 		clearModel.setRowCount(0);
 		try {
@@ -178,4 +275,93 @@ public class ApplicationArea extends JFrame {
 			e.printStackTrace();
 		}
 }
+	
+	private static JPanel createFeedItem(String username, String message) {
+        JPanel feedItemPanel = new JPanel();
+        feedItemPanel.setLayout(new BorderLayout());
+        feedItemPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // Kullanıcı adı
+        JLabel userLabel = new JLabel(username);
+        userLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        feedItemPanel.add(userLabel, BorderLayout.NORTH);
+
+        // Mesaj
+        JTextArea messageArea = new JTextArea(message);
+        messageArea.setLineWrap(true);
+        messageArea.setWrapStyleWord(true);
+        messageArea.setEditable(false);
+
+        messageArea.setPreferredSize(new Dimension(messageArea.getPreferredSize().width, 100));
+        feedItemPanel.add(messageArea, BorderLayout.CENTER);
+        feedItemPanel.add(messageArea, BorderLayout.CENTER);
+
+     
+        
+
+        return feedItemPanel;
+    }
+	
+	public void feedProccess(JPanel mainpanel) {
+		JPanel feedItemPanel = new JPanel();
+		ArrayList<String>blogStrArray = new ArrayList<>();
+		
+		
+try {
+        Connection conn = dataBaseConnection.connection();
+
+        Statement stmt = conn.createStatement();
+        ResultSet rs;
+        rs = stmt.executeQuery("SELECT* FROM admin");
+
+        
+        while(rs.next()) {
+        	String username = rs.getString("userName");
+        	String blogStr = rs.getString("my_blog");
+        	String []strArray = blogStr.split(",");
+        	if (!blogStr.equals("") ) {
+        		System.out.println("ife girdin mi  girdiysen evet yaz");
+        	for(String a : strArray) {
+        		System.out.println(a);
+        		blogStrArray.add(a);
+        	}
+        	
+        	
+        	for(int i = 0; i<blogStrArray.size();i++) {
+        		
+        		feedItemPanel = createFeedItem(username,blogStrArray.get(i));
+        		mainpanel.add(feedItemPanel);
+        	}
+        	blogStrArray.clear();
+  
+        
 }
+}
+}
+catch(SQLException e1) {
+	
+	e1.printStackTrace();
+}
+		
+	}
+	private void setModel(DefaultComboBoxModel<String> mdl, String str) {
+		JTextField textField = null;
+        comboBox.setModel(mdl);
+        textField.setText(str);
+        comboBox.setSelectedIndex(-1);
+        textField.setSelectionStart(str.length());
+        textField.setSelectionEnd(str.length());
+    }
+
+    private DefaultComboBoxModel<String> getFilteredModel(ArrayList<String> items, String input) {
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+        for (String item : items) {
+            if (item.toLowerCase().startsWith(input.toLowerCase())) {
+                model.addElement(item);
+            }
+        }
+        return model;
+    }
+}
+	
+

@@ -159,19 +159,21 @@ public class Users {
 		String my_blogs = null;
 		String query  ="UPDATE admin SET my_blog = ? WHERE id = ?";
 		try { 
-			my_blogs = rs.getString("my_blog");
-				conn = dataBaseConnection.connection();
+			conn = dataBaseConnection.connection();
 	         stmt = conn.createStatement();
 	         rs = stmt.executeQuery("SELECT * FROM admin");
-	         ps = conn.prepareStatement(query);
+	        
 	        while (rs.next()) {
-	        	if(rs.getInt(id)==this.id) {
+	        	if(rs.getInt("id")==this.id) {
+	        		 
+	        		my_blogs = rs.getString("my_blog");
 	        		my_blogs += str + ",";
 	        		break;
 	        	}
 
-	        	
+
 	        }
+	        ps = conn.prepareStatement(query);
 	        ps.setString(1, my_blogs);
             ps.setInt(2, this.id);
             ps.executeUpdate();
@@ -188,6 +190,19 @@ public class Users {
 	    }
 		
 	}
+	
+	
+	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	} 
 
 
         
@@ -199,7 +214,6 @@ public class Users {
 		
 		
 		
-	}
 
 
 

@@ -23,6 +23,7 @@ import javax.swing.JCheckBox;
 import java.awt.SystemColor;
 import javax.swing.JPasswordField;
 import Helper.*;
+import Model.Users;
 
 public class SignUpGUI extends JFrame {
 	dataBaseConnection dtbs = new dataBaseConnection();
@@ -93,7 +94,7 @@ public class SignUpGUI extends JFrame {
 		signGuiInputPanel.add(signGuipasswordLbl);
 		
 		JLabel signGuilblSıgnUP = new JLabel("SIGN UP");
-		signGuilblSıgnUP.setForeground(new Color(255, 255, 0));
+		signGuilblSıgnUP.setForeground(new Color(255, 255, 0));	
 		signGuilblSıgnUP.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 22));
 		signGuilblSıgnUP.setBounds(154, 6, 102, 47);
 		signGuiInputPanel.add(signGuilblSıgnUP);
@@ -117,14 +118,23 @@ public class SignUpGUI extends JFrame {
 						
 					}
 					else {
-						String query  ="INSERT INTO admin (userName,password) VALUES (?,?)" ;
+						String query  ="INSERT INTO admin (userName,password,friend_ids,my_blog) VALUES (?,?,?,?)" ;
 						try {
+							
+							Users user = new Users();
+							user.setUserName(signGuiusernameTxtField.getText());
+							user.setPassWord(signGuipasswordField.getText());
 							st=conn.createStatement();
 							ps = conn.prepareStatement(query);
 							ps.setString(1,signGuiusernameTxtField.getText() );
 							ps.setString(2,signGuiVerifyPasswordField.getText());
+							ps.setString(3, "");
+							ps.setString(4, "");
 							ps.executeUpdate();
-							System.out.println("ahmet");
+                           LoginGUI lgnGui = new LoginGUI();
+                           lgnGui.setVisible(true);
+                            dispose();
+                          
 							
 						} catch (SQLException e1) {
 							// TODO Auto-generated catch block

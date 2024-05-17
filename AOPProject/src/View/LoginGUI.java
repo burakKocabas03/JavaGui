@@ -16,7 +16,8 @@ import java.awt.Color;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
-
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,14 +34,7 @@ public class LoginGUI extends JFrame {
     private JTextField usernameTxtField;
     private JPasswordField passwordField;
 
-    public static LoginGUI getInstance() {
-        if (instance == null) {
-            instance = new LoginGUI();
-        }
-        return instance;
-    }
-
-    private LoginGUI() {
+    public LoginGUI() {
         setBackground(UIManager.getColor("EditorPane.background"));
         setResizable(false);
         setTitle("LOGIN");
@@ -86,6 +80,30 @@ public class LoginGUI extends JFrame {
         usernameTxtField.setBounds(6, 109, 204, 47);
         inputPanel.add(usernameTxtField);
         usernameTxtField.setColumns(10);
+JCheckBox checkRememberMe = new JCheckBox("Remember Me");
+        
+        checkRememberMe.setForeground(new Color(255, 255, 0));
+        checkRememberMe.setBounds(6, 309, 128, 23);
+        inputPanel.add(checkRememberMe);
+        checkRememberMe.addItemListener(new ItemListener() {
+           
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) { 
+                	
+                  
+            }
+            }
+        });
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
         JButton btnLogin = new JButton("LOGIN");
         btnLogin.addActionListener(new ActionListener() {
@@ -107,6 +125,7 @@ public class LoginGUI extends JFrame {
                                 user.setId(rs.getInt("id"));
                                 user.setUserName(rs.getString("userName"));
                                 user.setPassWord(rs.getString("password"));	
+                                
                                 ApplicationArea appArea = new ApplicationArea(user);
                                 appArea.setVisible(true);
                                 dispose();
@@ -151,11 +170,7 @@ public class LoginGUI extends JFrame {
         btnSıgnUp.setBounds(194, 352, 121, 47);
         inputPanel.add(btnSıgnUp);
 
-        JCheckBox checkRememberMe = new JCheckBox("Remember Me");
-        checkRememberMe.setForeground(new Color(255, 255, 0));
-        checkRememberMe.setBounds(6, 309, 128, 23);
-        inputPanel.add(checkRememberMe);
-
+        
         passwordField = new JPasswordField();
         passwordField.setBounds(6, 191, 204, 47);
         inputPanel.add(passwordField);
@@ -174,7 +189,7 @@ public class LoginGUI extends JFrame {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    LoginGUI frame = LoginGUI.getInstance();
+                    LoginGUI frame = new LoginGUI();
                     frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();

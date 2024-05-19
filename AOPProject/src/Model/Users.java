@@ -23,7 +23,9 @@ public class Users {
 		
 		
 	}
-	public Users() {}
+	public Users() {
+		
+	}
 	Connection conn = dataBaseConnection.connection();
 	Statement stmt ;
 	ResultSet rs;
@@ -156,26 +158,16 @@ public class Users {
 	}
 	
 	public void myPurrToDtbs(String str) {
-		String my_blogs = null;
-		String query  ="UPDATE admin SET my_blog = ? WHERE id = ?";
+		
+		String query  = "INSERT INTO posts (user_id,blogPosts) VALUES (?,?)" ;
 		try { 
 			conn = dataBaseConnection.connection();
 	         stmt = conn.createStatement();
-	         rs = stmt.executeQuery("SELECT * FROM admin");
-	        
-	        while (rs.next()) {
-	        	if(rs.getInt("id")==this.id) {
-	        		 
-	        		my_blogs = rs.getString("my_blog");
-	        		my_blogs += str + ",";
-	        		break;
-	        	}
+	         
 
-
-	        }
 	        ps = conn.prepareStatement(query);
-	        ps.setString(1, my_blogs);
-            ps.setInt(2, this.id);
+	        ps.setInt(1,this.id );
+            ps.setString(2,str);
             ps.executeUpdate();
 	        
 			

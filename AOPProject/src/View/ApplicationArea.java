@@ -6,7 +6,10 @@ import java.awt.FontMetrics;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 import Helper.dataBaseConnection;
@@ -19,6 +22,9 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JTable;
 import javax.swing.JTabbedPane;
 import javax.swing.JScrollPane;
@@ -35,25 +42,41 @@ import javax.swing.JTextArea;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 
 import java.awt.GridLayout;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingUtilities;
 import javax.swing.JComboBox;
 
 public class ApplicationArea extends JFrame {
 	private DefaultTableModel friendModel = null;
 	private String [] friendsArray = null;
 	
+	
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	static Users user = new Users();
 	private JTextField addFriendtextField;
 	private JTable friendListTable;
-	private JComboBox<String> comboBox;
-    private DefaultComboBoxModel<String> comboBoxModel;
+	// Definitions For SearchField
+		JScrollPane searchScrollPane ;
+	  private JTextField searchField;
+	  private DefaultListModel<String> suggestionListModel;
+	  private JList<String> suggestionList;
+	  
+	//definitions for popup menu
+	  private JPopupMenu popupMenu;
+	    private JMenuItem viewProfileItem;
+	    private JMenuItem addFriendItem;
+	  
+	  
+	  
+	  
+    
 	
 	/**
 	 * Launch the application.
@@ -76,6 +99,7 @@ public class ApplicationArea extends JFrame {
 	 * @throws SQLException 
 	 */
 	public ApplicationArea(Users user) {
+		
 		// bu kısım friendList içindi
 		this.user =user;
 		friendModel = new DefaultTableModel();
@@ -94,56 +118,6 @@ public class ApplicationArea extends JFrame {
 			e1.printStackTrace();
 		}
 		
-		try {
-			ArrayList<String>userNames = new ArrayList<>();
-			Connection conn = dataBaseConnection.connection();
-	        Statement stmt;
-	        ResultSet rs;
-	        stmt = conn.createStatement();
-	        rs = stmt.executeQuery("SELECT * FROM admin");
-	        while(rs.next()) {
-	        	userNames.add(rs.getString("userName"));
-	        }
-	        comboBoxModel = new DefaultComboBoxModel<>(new Vector<>(userNames));
-	        comboBox = new JComboBox<>(comboBoxModel);
-	        
-	        comboBox.setEditable(true);
-	        
-	        
-	       JTextField comboBoxTextField = (JTextField)comboBox.getEditor().getEditorComponent();
-	       comboBoxTextField.addKeyListener(new KeyAdapter(){
-	            @Override
-	            public void keyReleased(KeyEvent e) {
-	                String input = comboBoxTextField.getText();
-	                if (input.isEmpty()) {
-	                    setModel(new DefaultComboBoxModel<>(new Vector<>(userNames)), "");
-	                } else {
-	                    DefaultComboBoxModel<String> filteredModel = getFilteredModel(userNames, input);
-	                    if (filteredModel.getSize() > 0) {
-	                        setModel(filteredModel, input);
-	                        comboBox.showPopup();
-	                    } else {
-	                        comboBox.hidePopup();
-	                    }
-	                }
-	            }
-	        });	
-	       
-	       
-
-	        
-	        
-	        
-	        
-	        
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-        JTextField comboBoxtextField = (JTextField) comboBox.getEditor().getEditorComponent();
-        
-
-        
 		
 		
 		
@@ -153,8 +127,8 @@ public class ApplicationArea extends JFrame {
 		
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 671, 633);
-		contentPane = new JPanel();
+		setBounds(100, 100, 671, 715);
+		contentPane = 	new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
@@ -163,6 +137,7 @@ public class ApplicationArea extends JFrame {
 		addFriendtextField = new JTextField();
 		addFriendtextField.setBounds(538, 200, 130, 26);
 		contentPane.add(addFriendtextField);
+		
 		addFriendtextField.setColumns(10);
 		
 		JButton btnAddFriend = new JButton("Add Friend");
@@ -188,18 +163,18 @@ public class ApplicationArea extends JFrame {
 		friendListLabel.setBounds(563, 227, 81, 16);
 		contentPane.add(friendListLabel);
 
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(110, 176, 389, 405);
-		contentPane.add(scrollPane);
+		JScrollPane feedScrollPane = new JScrollPane();
+		feedScrollPane.setBounds(110, 282, 389, 405);
+		contentPane.add(feedScrollPane);
 		
-		JPanel panel_1 = new JPanel();
-		scrollPane.setViewportView(panel_1);
-		panel_1.setLayout(new BoxLayout(panel_1, BoxLayout.Y_AXIS));
+		JPanel feedPanel = new JPanel();
+		feedScrollPane.setViewportView(feedPanel);
+		feedPanel.setLayout(new BoxLayout(feedPanel, BoxLayout.Y_AXIS));
 		
 		
-		JPanel panel = new JPanel();
-		panel.setBounds(110, 100, 389, 77);
-		contentPane.add(panel);
+		JPanel PurrPanel = new JPanel();
+		PurrPanel.setBounds(110, 193, 389, 77);
+		contentPane.add(PurrPanel);
 		
 		JButton buttonPURR = new JButton("PURR");
 	
@@ -207,29 +182,32 @@ public class ApplicationArea extends JFrame {
 		JTextArea blogPurrArea = new JTextArea();
 		 blogPurrArea.setPreferredSize(new Dimension(blogPurrArea.getPreferredSize().width, 70));
 		blogPurrArea.setLineWrap(true);
-		GroupLayout gl_panel = new GroupLayout(panel);
-		gl_panel.setHorizontalGroup(
-			gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_panel.createSequentialGroup()
+		GroupLayout gl_PurrPanel = new GroupLayout(PurrPanel);
+		gl_PurrPanel.setHorizontalGroup(
+			gl_PurrPanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(Alignment.TRAILING, gl_PurrPanel.createSequentialGroup()
 					.addContainerGap(307, Short.MAX_VALUE)
 					.addComponent(buttonPURR)
 					.addContainerGap())
 				.addComponent(blogPurrArea, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE)
 		);
-		gl_panel.setVerticalGroup(
-			gl_panel.createParallelGroup(Alignment.TRAILING)
-				.addGroup(Alignment.LEADING, gl_panel.createSequentialGroup()
+		gl_PurrPanel.setVerticalGroup(
+			gl_PurrPanel.createParallelGroup(Alignment.TRAILING)
+				.addGroup(Alignment.LEADING, gl_PurrPanel.createSequentialGroup()
 					.addComponent(blogPurrArea, GroupLayout.PREFERRED_SIZE, 58, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(buttonPURR, GroupLayout.PREFERRED_SIZE, 13, Short.MAX_VALUE))
 		);
-		panel.setLayout(gl_panel);
+		PurrPanel.setLayout(gl_PurrPanel);
 		
 		
 		buttonPURR.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String blogMessage = blogPurrArea.getText();
 				user.myPurrToDtbs(blogMessage);
+				feedPanel.removeAll();
+				feedProccess(feedPanel);
+
 				
 
 				blogPurrArea.setText(null);
@@ -239,7 +217,6 @@ public class ApplicationArea extends JFrame {
 				
 			}
 		});
-		feedProccess(panel_1);
 		
 		JButton btnLogOut = new JButton("Log Out");
 		btnLogOut.addActionListener(new ActionListener() {
@@ -256,11 +233,176 @@ public class ApplicationArea extends JFrame {
 		
 		
 		
+		
+		feedProccess(feedPanel);
+
+		
+		
+		
+		searchField = new JTextField();
+		
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                updateSuggestions();
+                toggleSuggestionListVisibility();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                updateSuggestions();
+                toggleSuggestionListVisibility();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                updateSuggestions();
+                toggleSuggestionListVisibility();
+            }
+        });
+        
+        
+        suggestionListModel = new DefaultListModel<>();
+        suggestionList = new JList<>(suggestionListModel);
+        
+        
+         searchScrollPane = new JScrollPane(suggestionList);
+        
+        
+        JPanel searchPanel = new JPanel();
+        searchPanel.setBounds(109, 0, 390, 159);
+        searchPanel.setLayout(new BorderLayout());
+        searchPanel.add(searchField, BorderLayout.NORTH);
+        searchPanel.add(searchScrollPane, BorderLayout.SOUTH);
+        
+        contentPane.add(searchPanel);
+        
+        
+        
+        popupMenu = new JPopupMenu();
+        viewProfileItem = new JMenuItem("View Profile");
+        addFriendItem = new JMenuItem("Add Friend");
+
+        // Açılır menü öğelerine tıklanma dinleyicilerini ekle
+        viewProfileItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	String selectedUsername = suggestionList.getSelectedValue();
+            	try {
+
+                    Connection conn = dataBaseConnection.connection();
+
+                    Statement stmt = conn.createStatement();
+                    ResultSet rs = stmt.executeQuery("SELECT * FROM admin");
+                    while (rs.next()) {
+
+                        if (selectedUsername.equals(rs.getString("userName"))) {
+                            Users nextuser = new Users();
+                            nextuser.setId(rs.getInt("id"));
+                            nextuser.setUserName(rs.getString("userName"));
+                            nextuser.setPassWord(rs.getString("password"));	
+                            BlogPage blgPage = new BlogPage(user,nextuser);
+                            blgPage.setVisible(true);
+                            dispose();
+                            break;
+                 
+                            
+            }
+                    }
+            	}
+            	catch(SQLException e1) {
+            		e1.printStackTrace();
+            	}
+            	
+            	
+            }
+        });
+
+        addFriendItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String selectedUsername = suggestionList.getSelectedValue();
+                user.addFriend(selectedUsername);
+                updateFriendsList();
+            }
+        });
+
+        // Açılır menüye öğeleri ekle
+        popupMenu.add(viewProfileItem);
+        popupMenu.add(addFriendItem);
+        
+        
+        // Liste bileşenine fare dinleyicisi ekle
+        suggestionList.addMouseListener((MouseListener) new MouseAdapter() {
+            public void mouseReleased(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    // Fare sağ tıklaması algılandığında
+                    int index = suggestionList.locationToIndex(e.getPoint());
+                    suggestionList.setSelectedIndex(index); // Tıklanan öğeyi seç
+
+                    // Açılır menüyü göster
+                    popupMenu.show(suggestionList, e.getX(), e.getY());
+                }
+            }
+        });
+        
+        
+		
+		
+		
+	}
 	
+	private void toggleSuggestionListVisibility() {
+	    if (suggestionListModel.isEmpty()) {
+	        suggestionList.setVisible(false);
+	        searchScrollPane.setVisible(false); // Eğer arama sonuçları yoksa, scroll pane'i gizle
+	    } else {
+	    	 searchScrollPane.setVisible(true); 
+	        suggestionList.setVisible(true);
+	        int preferredHeight = Math.min(suggestionListModel.getSize() * suggestionList.getFixedCellHeight(),59);
+	        suggestionList.setPreferredSize(new Dimension(suggestionList.getWidth(), preferredHeight));
+	        searchScrollPane.setPreferredSize(new Dimension(searchScrollPane.getWidth(), preferredHeight));
+	        // Arama sonuçları varsa, scroll pane'i göster
+	        searchScrollPane.revalidate();
+	        searchScrollPane.repaint();
+	    }
+	}
+
+	
+	private void updateSuggestions() {
+        String searchText = searchField.getText().trim(); // Arama metnini al, trim() metodu ile boşlukları kaldır
+        suggestionListModel.clear(); // Öneri listesini temizle
+
+        if (!searchText.isEmpty()) { // Arama metni alanı boş değilse
+            try {
+                // Veritabanına bağlan
+                Connection conn = dataBaseConnection.connection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT * FROM admin");
+
+                // Veritabanından kullanıcı adlarını al ve öneri listesine ekle
+                while (rs.next()) {
+                    String userName = rs.getString("userName");
+                    if (userName.toLowerCase().startsWith(searchText.toLowerCase()) &&  !userName.equals(user.getUserName()) ) {
+                        suggestionListModel.addElement(userName);
+                    }
+                }
+
+                // Kaynakları serbest bırak
+                rs.close();
+                stmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
 	}
 	
 	
-	private void updateFriendsList() {
+	
+	
+	
+	
+	
+	public void updateFriendsList() {
 		DefaultTableModel clearModel = (DefaultTableModel) friendListTable.getModel();
 		clearModel.setRowCount(0);
 		try {
@@ -276,7 +418,7 @@ public class ApplicationArea extends JFrame {
 		}
 }
 	
-	private static JPanel createFeedItem(String username, String message) {
+	public static JPanel createFeedItem(String username, String message , String time) {
         JPanel feedItemPanel = new JPanel();
         feedItemPanel.setLayout(new BorderLayout());
         feedItemPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -291,6 +433,8 @@ public class ApplicationArea extends JFrame {
         messageArea.setLineWrap(true);
         messageArea.setWrapStyleWord(true);
         messageArea.setEditable(false);
+        JLabel timelabel = new JLabel(time);
+        feedItemPanel.add(timelabel, BorderLayout.SOUTH);
 
         messageArea.setPreferredSize(new Dimension(messageArea.getPreferredSize().width, 100));
         feedItemPanel.add(messageArea, BorderLayout.CENTER);
@@ -312,56 +456,35 @@ try {
 
         Statement stmt = conn.createStatement();
         ResultSet rs;
-        rs = stmt.executeQuery("SELECT* FROM admin");
+        rs = stmt.executeQuery("SELECT admin.userName, posts.blogPosts, posts.time " +
+                "FROM posts " +
+                "JOIN admin ON posts.user_id = admin.id " +
+                "ORDER BY posts.time DESC");
 
         
         while(rs.next()) {
-        	String username = rs.getString("userName");
-        	String blogStr = rs.getString("my_blog");
-        	String []strArray = blogStr.split(",");
-        	if (!blogStr.equals("") ) {
-        		System.out.println("ife girdin mi  girdiysen evet yaz");
-        	for(String a : strArray) {
-        		System.out.println(a);
-        		blogStrArray.add(a);
-        	}
+        	String username = rs.getString("username");
+        	String blogStr = rs.getString("blogPosts");
+        	String time = rs.getString("time");
         	
-        	
-        	for(int i = 0; i<blogStrArray.size();i++) {
-        		
-        		feedItemPanel = createFeedItem(username,blogStrArray.get(i));
+        	feedItemPanel = createFeedItem(username,blogStr,time);
         		mainpanel.add(feedItemPanel);
-        	}
-        	blogStrArray.clear();
-  
+        
+        	
+ 
         
 }
 }
-}
+
+
 catch(SQLException e1) {
 	
 	e1.printStackTrace();
 }
+
 		
 	}
-	private void setModel(DefaultComboBoxModel<String> mdl, String str) {
-		JTextField textField = null;
-        comboBox.setModel(mdl);
-        textField.setText(str);
-        comboBox.setSelectedIndex(-1);
-        textField.setSelectionStart(str.length());
-        textField.setSelectionEnd(str.length());
-    }
-
-    private DefaultComboBoxModel<String> getFilteredModel(ArrayList<String> items, String input) {
-        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
-        for (String item : items) {
-            if (item.toLowerCase().startsWith(input.toLowerCase())) {
-                model.addElement(item);
-            }
-        }
-        return model;
-    }
-}
+		
+}		
 	
 

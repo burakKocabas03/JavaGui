@@ -1,6 +1,7 @@
 package View;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -9,12 +10,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-
+import Helper .*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import Helper.dataBaseConnection;
+
 import Model.Users;
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
@@ -60,7 +61,7 @@ public class BlogPage extends JFrame {
 		this.previousUser = previousUser;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 700, 629);
-		blogAreaPane = new JPanel();
+		blogAreaPane = 	new JPanel();
 		blogAreaPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(blogAreaPane);
@@ -88,7 +89,7 @@ public class BlogPage extends JFrame {
 		JPanel blogsPane = new JPanel();
 		blogsScrollPane.setViewportView(blogsPane);
 		blogsPane.setLayout(new BoxLayout(blogsPane, BoxLayout.Y_AXIS));
-		
+		if(nextUser.getUserName().equals(previousUser.getUserName())){
 		JPanel purrPanel = new JPanel();
 		purrPanel.setBounds(164, 102, 355, 90);
 		blogAreaPane.add(purrPanel);
@@ -127,13 +128,16 @@ public class BlogPage extends JFrame {
 					.addContainerGap())
 		);
 		purrPanel.setLayout(gl_purrPanel);
+		
+		}
 		feedProccess(blogsPane);
 	}
 	
 	public static JPanel createFeedItem(String username, String message , String time) {
         JPanel feedItemPanel = new JPanel();
         feedItemPanel.setLayout(new BorderLayout());
-        feedItemPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        feedItemPanel.setBorder(new RoundedBorder(30));
+        feedItemPanel.setBackground(Color.WHITE);
 
         // Kullanıcı adı
         JLabel userLabel = new JLabel(username);
@@ -145,14 +149,20 @@ public class BlogPage extends JFrame {
         messageArea.setLineWrap(true);
         messageArea.setWrapStyleWord(true);
         messageArea.setEditable(false);
+        messageArea.setOpaque(false);
+      
+        
+        JPanel messagePanel = new JPanel(new BorderLayout());
+        messagePanel.setBorder(new RoundedBorder(30));
+        messagePanel.setBackground(Color.WHITE); // Arka plan rengini beyaz yap
+        messagePanel.add(messageArea, BorderLayout.CENTER);
+        feedItemPanel.add(messagePanel, BorderLayout.CENTER);
+        
+        
         JLabel timelabel = new JLabel(time);
         feedItemPanel.add(timelabel, BorderLayout.SOUTH);
 
-        messageArea.setPreferredSize(new Dimension(messageArea.getPreferredSize().width, 100));
-        feedItemPanel.add(messageArea, BorderLayout.CENTER);
-        feedItemPanel.add(messageArea, BorderLayout.CENTER);
-
-     
+      
         
 
         return feedItemPanel;
@@ -161,6 +171,7 @@ public class BlogPage extends JFrame {
 	public void feedProccess(JPanel mainpanel) {
 		JPanel feedItemPanel = new JPanel();
 		ArrayList<String>blogStrArray = new ArrayList<>();
+		feedItemPanel.setBorder(BorderFactory.createEmptyBorder());
 		
 		
 try {

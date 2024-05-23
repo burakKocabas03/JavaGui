@@ -9,8 +9,11 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import java.awt.Font;
 import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
+
 import java.awt.Color;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
@@ -61,49 +64,83 @@ public class SignUpGUI extends JFrame {
 		setResizable(false);
 		setTitle("SIGN UP");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 728, 609);
+		setBounds(100, 100, 902, 796);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(95, 158, 160));
-		contentPane.setBorder(null);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
+		JPanel panel = new JPanel();
+		panel.setBackground(new Color(255, 240, 245));
+		panel.setBounds(0, 109, 899, 211);
+		contentPane.add(panel);
+		panel.setLayout(null);
+		
 		JLabel signUpGuiIcon = new JLabel(new ImageIcon(getClass().getResource("cat128.png")));
-		signUpGuiIcon.setBounds(282, 16, 147, 119);
-		contentPane.add(signUpGuiIcon);
+		signUpGuiIcon.setBounds(0, 10, 228, 189);
+		panel.add(signUpGuiIcon);
+		signUpGuiIcon.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		JPanel signGuiInputPanel = new JPanel();
-		signGuiInputPanel.setBackground(new Color(112, 128, 144));
-		signGuiInputPanel.setBounds(150, 167, 410, 409);
-		contentPane.add(signGuiInputPanel);
-		signGuiInputPanel.setLayout(null);
+		JLabel PurrConnectLabel = new JLabel("PURR CONNECT");
+		PurrConnectLabel.setBounds(200, 45, 611, 110);
+		panel.add(PurrConnectLabel);
+		PurrConnectLabel.setForeground(Color.BLACK);
+		PurrConnectLabel.setFont(new Font("Unispace", Font.PLAIN, 80));
+		PurrConnectLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		
-		JLabel signGuiuserNameLbl = new JLabel("USERNAME : ");
-		signGuiuserNameLbl.setForeground(new Color(255, 255, 0));
-		signGuiuserNameLbl.setBackground(new Color(238, 238, 238));
-		signGuiuserNameLbl.setFont(new Font("Lantinghei TC", Font.PLAIN, 12));
-		signGuiuserNameLbl.setBounds(6, 50, 87, 27);
-		signGuiInputPanel.add(signGuiuserNameLbl);
+		JLabel SubLineLabel = new JLabel("Connect to People");
+		SubLineLabel.setBounds(309, 145, 282, 45);
+		panel.add(SubLineLabel);
+		SubLineLabel.setFont(new Font("Candara", Font.BOLD, 17));
+		SubLineLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		
+		
+		JLabel signGuiuserNameLbl = new JLabel("USERNAME :");
+		signGuiuserNameLbl.setFont(new Font("Haettenschweiler", Font.ITALIC, 33));
+		signGuiuserNameLbl.setBounds(174, 352, 203, 64);
+		contentPane.add(signGuiuserNameLbl);
 		
 		JLabel signGuipasswordLbl = new JLabel("PASSWORD :");
-		signGuipasswordLbl.setForeground(new Color(255, 255, 0));
-		signGuipasswordLbl.setFont(new Font("Lantinghei TC", Font.PLAIN, 12));
-		signGuipasswordLbl.setBounds(6, 125, 102, 27);
-		signGuiInputPanel.add(signGuipasswordLbl);
+	
+		signGuipasswordLbl.setFont(new Font("Haettenschweiler", Font.ITALIC, 33));
+		signGuipasswordLbl.setBounds(177, 428, 223, 45);
+		contentPane.add(signGuipasswordLbl);
+		
+		JLabel signGuilblVerfyPassword = new JLabel("CONFIRM PASSWORD :");
+		
+		signGuilblVerfyPassword.setFont(new Font("Haettenschweiler", Font.ITALIC, 33));
+		
+		signGuilblVerfyPassword.setBounds(18, 492, 359, 45);
+		contentPane.add(signGuilblVerfyPassword);
 		
 		JLabel signGuilblSıgnUP = new JLabel("SIGN UP");
-		signGuilblSıgnUP.setForeground(new Color(255, 255, 0));	
-		signGuilblSıgnUP.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 22));
-		signGuilblSıgnUP.setBounds(154, 6, 102, 47);
-		signGuiInputPanel.add(signGuilblSıgnUP);
+		
+		signGuilblSıgnUP.setFont(new Font("Haettenschweiler", Font.ITALIC, 33));
+		signGuilblSıgnUP.setBounds(321, 6, 179, 47);
+		contentPane.add(signGuilblSıgnUP);
 		
 		signGuiusernameTxtField = new JTextField();
-		signGuiusernameTxtField.setBounds(6, 75, 204, 47);
-		signGuiInputPanel.add(signGuiusernameTxtField);
+		signGuiusernameTxtField.setBounds(389, 376, 209, 33);
+		contentPane.add(signGuiusernameTxtField);
 		signGuiusernameTxtField.setColumns(10);
 		
+		signGuipasswordField = new JPasswordField();
+		signGuipasswordField.setBounds(389, 440, 209, 33);
+		contentPane.add(signGuipasswordField);
+		
+		signGuiVerifyPasswordField = new JPasswordField();
+		signGuiVerifyPasswordField.setBounds(389, 506, 209, 33);
+		contentPane.add(signGuiVerifyPasswordField);
+		
 		JButton signGuibtnLogin = new JButton("SIGN IN");
+		signGuibtnLogin.setBackground(new Color(250, 250, 210));
+		signGuibtnLogin.setFont(new Font("Unispace", Font.BOLD, 24));
+		signGuibtnLogin.setBounds(422, 584, 148, 45);
+		contentPane.add(signGuibtnLogin);
+		
 		signGuibtnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -117,7 +154,7 @@ public class SignUpGUI extends JFrame {
 						
 					}
 					else {
-						String query  ="INSERT INTO admin (userName,password,friend_ids,my_blog) VALUES (?,?,?,?)" ;
+						String query  ="INSERT INTO user (userName,password,friend_ids) VALUES (?,?,?)" ;
 						try {
 							
 							Users user = new Users();
@@ -128,7 +165,7 @@ public class SignUpGUI extends JFrame {
 							ps.setString(1,signGuiusernameTxtField.getText() );
 							ps.setString(2,signGuiVerifyPasswordField.getText());
 							ps.setString(3, "");
-							ps.setString(4, "");
+							
 							ps.executeUpdate();
                            LoginGUI lgnGui = new LoginGUI();
                            lgnGui.setVisible(true);
@@ -149,34 +186,16 @@ public class SignUpGUI extends JFrame {
 				
 			}
 		});
-		signGuibtnLogin.setFont(new Font("Lucida Grande", Font.PLAIN, 13));
-		signGuibtnLogin.setOpaque(true);
-		signGuibtnLogin.setBackground(new Color(95, 158, 160));
-		signGuibtnLogin.setForeground(new Color(255, 255, 0));
-		signGuibtnLogin.setBounds(6, 295, 121, 47);
-		signGuibtnLogin.setBorderPainted(false);
-		signGuiInputPanel.add(signGuibtnLogin);
 		
-		signGuipasswordField = new JPasswordField();
-		signGuipasswordField.setBounds(6, 150, 204, 47);
-		signGuiInputPanel.add(signGuipasswordField);
+				
+		JLabel BackGroundLabel = new JLabel(new ImageIcon(getClass().getResource("catBackRound.jpg")));
+    	BackGroundLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    	BackGroundLabel.setBounds(0, 0, 899, 773);
+    	contentPane.add(BackGroundLabel);
 		
-		JLabel signGuilblVerfyPassword = new JLabel("VERIFY PASSWORD");
-		signGuilblVerfyPassword.setForeground(Color.YELLOW);
-		signGuilblVerfyPassword.setFont(new Font("Lantinghei TC", Font.PLAIN, 12));
-		signGuilblVerfyPassword.setBackground(UIManager.getColor("Button.background"));
-		signGuilblVerfyPassword.setBounds(6, 200, 134, 27);
-		signGuiInputPanel.add(signGuilblVerfyPassword);
 		
-		signGuiVerifyPasswordField = new JPasswordField();
-		signGuiVerifyPasswordField.setBounds(6, 225, 204, 47);
-		signGuiInputPanel.add(signGuiVerifyPasswordField);
 		
-		JLabel signGuiPurrConnect = new JLabel("PURR CONNECT");
-		signGuiPurrConnect.setBounds(260, 131, 189, 34);
-		contentPane.add(signGuiPurrConnect);
-		signGuiPurrConnect.setBackground(new Color(255, 255, 0));
-		signGuiPurrConnect.setForeground(new Color(255, 255, 0));
-		signGuiPurrConnect.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 22));
+		
+		
 	}
 }

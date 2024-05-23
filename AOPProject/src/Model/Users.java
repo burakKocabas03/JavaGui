@@ -11,7 +11,8 @@ import javax.swing.JOptionPane;
 import Helper.dataBaseConnection;
 import View.ApplicationArea;
 
-public class Users {
+
+public class Users implements UserProfile  {
 	
 	
 	public Users(String userName, String passWord , int id ) {
@@ -19,6 +20,7 @@ public class Users {
 		this.id = id;
 		this.userName = userName;
 		this.passWord = passWord;
+		
 		
 		
 		
@@ -30,9 +32,10 @@ public class Users {
 	Statement stmt ;
 	ResultSet rs;
 	PreparedStatement ps;
-	private int id;
-	private String userName;
+	protected int id;
+	protected String userName;
 	private String passWord;
+
 	
 		 
 	
@@ -63,7 +66,7 @@ public class Users {
 		  try {
 		        conn = dataBaseConnection.connection();
 		         stmt = conn.createStatement();
-		         rs = stmt.executeQuery("SELECT * FROM admin");
+		         rs = stmt.executeQuery("SELECT * FROM user");
 		        while(rs.next()) {
 		        	System.out.println("döngünün içindeyim");
 		        	System.out.println(this.userName);
@@ -102,7 +105,7 @@ public class Users {
 	    try {
 	         conn = dataBaseConnection.connection();
 	         stmt = conn.createStatement();
-	         rs = stmt.executeQuery("SELECT * FROM admin");
+	         rs = stmt.executeQuery("SELECT * FROM user");
 	        while (rs.next()) {
 	            String x = rs.getString("userName");
 	            if (x.equals(friendUserName)) {
@@ -113,8 +116,13 @@ public class Users {
 	                friendIDS = rs.getString("friend_ids");
 	            }
 	        }
+	        
+	       String [] sizeControl = friendIDS.split(",");
+	       
+	       int size = sizeControl.length;
+	       System.out.println(size);
 
-	        if (id_frnd != -1 && friendIDS != null) {
+	        if (id_frnd != -1 && friendIDS != null ) {
 	            if (friendIDS.contains(friendUserName)) {
 	                
 	                JOptionPane.showMessageDialog(null, "Bu kullanıcı zaten arkadaşlarınızda bulunmaktadır.", "Hata", JOptionPane.ERROR_MESSAGE);
@@ -123,14 +131,16 @@ public class Users {
 	                    friendIDS += ",";
 	                }
 	                friendIDS += friendUserName;
-	                String updateQuery = "UPDATE admin SET friend_ids = ? WHERE id = ?";
-	                PreparedStatement updateStatement = conn.prepareStatement(updateQuery);
-	                updateStatement.setString(1, friendIDS);
-	                updateStatement.setInt(2, this.id);
-	                updateStatement.executeUpdate();
-	                System.out.println("Arkadaş Eklendi");
+	                String updateQuery = "UPDATE user SET friend_ids = ? WHERE id = ?";
+	                PreparedStatement updateStatement1 = conn.prepareStatement(updateQuery);
+	                updateStatement1.setString(1, friendIDS);
+	                updateStatement1.setInt(2, this.id);
+	                updateStatement1.executeUpdate();
+	                String notificationMessage = friendUserName + " is now your friend!";
+	                
 
-	                String updateFriendQuery = "SELECT friend_ids FROM admin WHERE id = ?";
+
+	                String updateFriendQuery = "SELECT friend_ids FROM user WHERE id = ?";
 	                PreparedStatement updateFriendStatement = conn.prepareStatement(updateFriendQuery);
 	                updateFriendStatement.setInt(1, id_frnd);
 	                ResultSet friendResultSet = updateFriendStatement.executeQuery();
@@ -142,15 +152,23 @@ public class Users {
 	                    friendFriendIDS += ",";
 	                }
 	                friendFriendIDS += this.userName;
-	                String updateFriendListQuery = "UPDATE admin SET friend_ids = ? WHERE id = ?";
+	                String updateFriendListQuery = "UPDATE user SET friend_ids = ? WHERE id = ?";
 	                PreparedStatement updateFriendListStatement = conn.prepareStatement(updateFriendListQuery);
 	                updateFriendListStatement.setString(1, friendFriendIDS);
 	                updateFriendListStatement.setInt(2, id_frnd);
 	                updateFriendListStatement.executeUpdate();
 	                JOptionPane.showMessageDialog(null, "User "+friendUserName+" added your friend list ","Info",JOptionPane.INFORMATION_MESSAGE);
+	                
+	                conn.close();
+	                stmt.close();
+	                rs.close();
+	                updateFriendStatement.close();
+	                updateStatement1.close();
 	            }
 	        } else {
-	            System.out.println("Arkadaş eklenemedi");
+	        	
+	        	
+	        	
 	        }
 	    } catch (SQLException e1) {
 	        e1.printStackTrace();
@@ -158,6 +176,8 @@ public class Users {
 	}
 	
 	public void myPurrToDtbs(String str) {
+		int count = this.postCount();
+		if (count<5) {
 		
 		String query  = "INSERT INTO posts (user_id,blogPosts) VALUES (?,?)" ;
 		try { 
@@ -180,12 +200,76 @@ public class Users {
 		catch (SQLException e1) {
 	        e1.printStackTrace();
 	    }
+		}
+		
+		else{
+			JOptionPane.showMessageDialog(null, "You have to take premium membership for more PURR", "Hata", JOptionPane.ERROR_MESSAGE);
+		}
+		
+		
 		
 	}
+public void myPurrToDtbsGroup(Groups group ,String str) {
+		
+		String query  = "INSERT INTO groupPost (groupId,user_id,groupPost) VALUES (?,?,?)" ;
+		try { 
+			conn = dataBaseConnection.connection();
+	         stmt = conn.createStatement();
+	         
+
+	        ps = conn.prepareStatement(query);
+	        ps.setInt(1,group.getGroupId() );
+            ps.setInt(2,this.id);
+            ps.setString(3, str);
+            ps.executeUpdate();
+	        
+			
+				
+			
+			
+			
+		
+		}
+		catch (SQLException e1) {
+	        e1.printStackTrace();
+	    }
+	
 
 		
 		
-	} 
+	}
+public int postCount() {
+	int count = 0;
+	String query = "SELECT user_id FROM posts WHERE user_id = ?";
+	try {
+		conn = dataBaseConnection.connection();
+        stmt = conn.createStatement();
+        
+
+       ps = conn.prepareStatement(query);
+       ps.setInt(1,this.getId() );
+       
+       ResultSet rs = ps.executeQuery();
+       while(rs.next()) {
+    	   count +=1;
+       }
+		
+		
+		
+	}
+	
+	catch(SQLException e1) {
+		e1.printStackTrace();
+		
+	}
+	return count;
+	
+	
+}
+
+
+
+
 
 
         
@@ -196,7 +280,9 @@ public class Users {
 		
 		
 		
-		
+}
+
+
 
 
 

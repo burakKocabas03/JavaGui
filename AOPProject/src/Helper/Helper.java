@@ -2,6 +2,9 @@ package Helper;
 
 import javax.swing.JOptionPane;
 
+import Model.PremiumUser;
+import Model.Users;
+
 public class Helper {
 	
 	public static void showMsg(String str) {
@@ -22,5 +25,12 @@ public class Helper {
 		
 		
 	}
+	 public static void chooseObject(Users user) {
+	        if (user.getClass()==PremiumUser.class) {
+	            PremiumUser premiumUser = (PremiumUser) user;
+	            
+	        } 
+	    }
+	}
 
-}
+

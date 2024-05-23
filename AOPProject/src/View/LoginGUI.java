@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import Helper.*;
+import Model.PremiumUser;
 import Model.Users;
 
 import java.awt.Font;
@@ -98,7 +99,7 @@ public class LoginGUI extends JFrame {
 			passwordField.setBounds(335, 438, 228, 31);
 			contentPane.add(passwordField);
 		
-JCheckBox checkRememberMe = new JCheckBox("Remember Me");
+
         
        
         
@@ -120,10 +121,11 @@ JCheckBox checkRememberMe = new JCheckBox("Remember Me");
                         Connection conn = dataBaseConnection.connection();
 
                         Statement stmt = conn.createStatement();
-                        ResultSet rs = stmt.executeQuery("SELECT * FROM admin");
+                        ResultSet rs = stmt.executeQuery("SELECT * FROM user");
                         while (rs.next()) {
 
                             if (usernameTextField.getText().equals(rs.getString("userName")) && passwordField.getText().equals(rs.getString("password"))) {
+                            	if(rs.getBoolean("premiumMemberShip") == false) {
                                 Users user = new Users();
                                 user.setId(rs.getInt("id"));
                                 user.setUserName(rs.getString("userName"));
@@ -131,9 +133,25 @@ JCheckBox checkRememberMe = new JCheckBox("Remember Me");
                                 
                                 ApplicationArea appArea = new ApplicationArea(user);
                                 appArea.setVisible(true);
+                                appArea.showNotifications(user.getId());
                                 dispose();
                                 break;
 
+                            }
+                            	else {
+                            		PremiumUser prmuser = new PremiumUser();
+                            		prmuser.setId(rs.getInt("id"));
+                                    prmuser.setUserName(rs.getString("userName"));
+                                   prmuser.setPassWord(rs.getString("password"));
+         
+
+                                   ApplicationArea appArea = new ApplicationArea(prmuser);
+                                   appArea.showNotifications(prmuser.getId());
+
+                                   appArea.setVisible(true);
+                                   dispose();
+                            	}
+                            	
                             }
 
                         }
